@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import os
 
+from mnextlib import util
 from mnextlib import Router
 
 
@@ -27,7 +28,8 @@ class Bird(Router):
         privateDirs = kwargs.get('privateDirs', [])
         kwargs['privateDirs'] = privateDirs + [self._LOCALSTATEDIR]
         super(Bird, self).__init__(name, intfIPs=intfIPs, **kwargs)
-        self.confFile = os.path.abspath(confFile) if confFile else None
+        assert confFile is not None
+        self.confFile = util.resolve_path(confFile)
 
     def start(self, controllers):
         super(Bird, self).start(controllers=controllers)

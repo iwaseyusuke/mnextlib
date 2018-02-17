@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+from mnextlib import util
 from mnextlib import Router
 
 
@@ -28,7 +29,7 @@ class VPP(Router):
         kwargs['privateDirs'] = privateDirs + self._PRIVATE_DIRS
         super(VPP, self).__init__(name, intfIPs=intfIPs, **kwargs)
         assert confFile is not None
-        self.confFile = os.path.abspath(confFile)
+        self.confFile = util.resolve_path(confFile)
 
     def start(self, controllers):
         super(VPP, self).start(controllers=controllers)

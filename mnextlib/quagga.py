@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import os
 
+from mnextlib import util
 from mnextlib import Router
 
 
@@ -31,20 +32,21 @@ class Quagga(Router):
         privateDirs = kwargs.get('privateDirs', [])
         kwargs['privateDirs'] = privateDirs + self._PRIVATE_DIRS
         super(Quagga, self).__init__(name, intfIPs=intfIPs, **kwargs)
-        self.confDir = os.path.abspath(confDir) if confDir else None
+        assert confDir is not None
+        self.confDir = util.resolve_path(confDir)
 
         self.zebraConf = None
-        _conf = '%s/zebra.conf' % confDir
+        _conf = '%s/zebra.conf' % self.confDir
         if os.path.isfile(_conf):
             self.zebraConf = _conf
 
         self.bgpdConf = None
-        _conf = '%s/bgpd.conf' % confDir
+        _conf = '%s/bgpd.conf' % self.confDir
         if os.path.isfile(_conf):
             self.bgpdConf = _conf
 
         self.ospfdConf = None
-        _conf = '%s/ospfd.conf' % confDir
+        _conf = '%s/ospfd.conf' % self.confDir
         if os.path.isfile(_conf):
             self.ospfdConf = _conf
 
