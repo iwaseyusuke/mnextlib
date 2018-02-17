@@ -1,0 +1,75 @@
+#!/bin/bash
+
+set -e -u
+
+# Show usage
+usage()
+{
+    echo "Usage: $0 [options]"
+    echo "       $0 NODE_NAME [COMMAND...]"
+    echo "       $0 SUB_COMMAND"
+    echo
+    echo "The utility opens Mininet node terminal from the command line."
+    echo
+    echo "Options:"
+    echo "  -h, --help            show this help message and exit."
+    echo
+    echo "The parameters are:"
+    echo
+    echo "  NODE_NAME             mininet node name to attach."
+    echo "  COMMAND               arbitrary command to be executed on node."
+    echo "                        if omitted attach namespace and open bash."
+    echo
+    echo "The sub-commands are:"
+    echo
+    echo "  show                  show names of running nodes."
+    echo
+}
+
+# Parse input args
+if [ $# -lt 1 ]
+then
+    usage
+    exit 0
+elif [ $1 = '-h' -o $1 = '--help' ]
+then
+    usage
+    exit 0
+elif [ $1 = 'show' ]
+then
+    ps -ef | grep mininet: | cut -d ':' -f 5
+    exit 0
+fi
+
+TARGET_NODE=$1
+shift
+
+# Get target node's pid
+TARGET_RCFILE=/tmp/bashrc_${TARGET_NODE}
+TARGET_PID=`pgrep -f "mininet:${TARGET_NODE}$"`
+if [ ! ${TARGET_PID} ]
+then
+    echo "No such node name: ${TARGET_NODE}"
+    exit 1
+fi
+
+# Override current .bashrc file
+sudo cp -p ${HOME}/.bashrc ${TARGET_RCFILE}
+sudo echo "export NODE_NAME=${TARGET_NODE}"         >> ${TARGET_RCFILE}
+sudo echo "PS1=${TARGET_NODE}'> '"                  >> ${TARGET_RCFILE}
+sudo echo "rm -f ${TARGET_RCFILE}"                  >> ${TARGET_RCFILE}
+## Append path to vtysh and daemons of Quagga/FRRouting
+sudo echo "test -f /var/run/quagga/zebra.pid \\"    >> ${TARGET_RCFILE}
+sudo echo "&& export PATH=${PATH}:/usr/lib/quagga/" >> ${TARGET_RCFILE}
+sudo echo "test -f /var/run/frr/zebra.pid \\"       >> ${TARGET_RCFILE}
+sudo echo "&& export PATH=${PATH}:/usr/lib/frr/"    >> ${TARGET_RCFILE}
+
+# Invoke command
+SUDO=`which sudo`
+MNEXEC="mnexec -a ${TARGET_PID} bash --rcfile ${TARGET_RCFILE}"
+if [ $# -eq 0 ]
+then
+    ${SUDO} ${MNEXEC}
+else
+    ${SUDO} ${MNEXEC} -c "$*"
+fi
