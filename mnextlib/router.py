@@ -29,11 +29,11 @@ class Router(Switch):
         # Router node does not requires "controlIntf"
         self.controlIntf = None
 
-    def setIP(self, *args, **kwargs):
+    def setIP(self, ip=None, prefixLen=8, intf=None, **kwargs):
         self.cmd('ip link set dev lo up')
-        for intf, ip in self.intfIPs:
-            self.cmd('ip address add %s dev %s' % (ip, intf))
-            self.cmd('ip link set dev %s up' % intf)
+        for i, a in self.intfIPs:
+            self.cmd('ip address add %s dev %s' % (a, i))
+            self.cmd('ip link set dev %s up' % i)
         return None
 
     def start(self, controllers):

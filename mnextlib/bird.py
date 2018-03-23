@@ -2,8 +2,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-import os
-
 from mnextlib import util
 from mnextlib import Router
 
