@@ -45,7 +45,7 @@ TARGET_NODE=$1
 shift
 
 # Get target node's pid
-TARGET_RCFILE=/tmp/bashrc_${TARGET_NODE}
+TARGET_RCFILE=$(mktemp)
 TARGET_PID=`pgrep -f "mininet:${TARGET_NODE}$"`
 if [ ! ${TARGET_PID} ]
 then
