@@ -16,6 +16,9 @@ clean ()
 
 clean
 
+# Upgrade pip to the latest
+${SUDO} pip install --upgrade pip
+
 ${SUDO} pip install --upgrade --force-reinstall .
 
 clean
