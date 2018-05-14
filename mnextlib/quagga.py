@@ -35,7 +35,7 @@ class Quagga(Router):
         assert confDir is not None
         self.confDir = util.resolve_path(confDir)
         self.sbinDir = self._SBINDIR
-        if os.path.isfile("/usr/sbin/zebra"):
+        if not os.path.isfile(os.path.join(self._SBINDIR, "zebra")):
             # Case for APT package
             self.sbinDir = "/usr/sbin"
 
