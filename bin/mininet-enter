@@ -60,9 +60,9 @@ sudo echo "PS1=${TARGET_NODE}'> '"                  >> ${TARGET_RCFILE}
 sudo echo "rm -f ${TARGET_RCFILE}"                  >> ${TARGET_RCFILE}
 ## Append path to vtysh and daemons of Quagga/FRRouting
 sudo echo "test -f /var/run/quagga/zebra.pid \\"    >> ${TARGET_RCFILE}
-sudo echo "&& export PATH=${PATH}:/usr/lib/quagga/" >> ${TARGET_RCFILE}
+sudo echo "&& export PATH=/usr/lib/quagga:${PATH}"  >> ${TARGET_RCFILE}
 sudo echo "test -f /var/run/frr/zebra.pid \\"       >> ${TARGET_RCFILE}
-sudo echo "&& export PATH=${PATH}:/usr/lib/frr/"    >> ${TARGET_RCFILE}
+sudo echo "&& export PATH=/usr/lib/frr:${PATH}"     >> ${TARGET_RCFILE}
 
 # Invoke command
 SUDO=`which sudo`
